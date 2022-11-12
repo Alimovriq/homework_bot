@@ -83,25 +83,35 @@ def check_response(response):
     """Проверить ответ API."""
     logger.debug('Начало проверки ответа API')
     homeworks = response['homeworks']
-    if homeworks is None:
-        logger.error('Данные по ключу "homeworks" не найдены')
-        raise KeyError('Данные по ключу "homeworks" не найдены')
     if not isinstance(homeworks, list):
         logger.error('Тип запроса не список')
         raise TypeError('Тип запроса не список')
-    return homeworks
+    else:
+        try:
+            homeworks
+            return homeworks
+        except KeyError as error:
+            if homeworks is None:
+                logger.error(
+                    f'Данные по ключу "homeworks" не найдены: {error}'
+                )
+                raise KeyError(
+                    f'Данные по ключу "homeworks" не найдены: {error}'
+                )
 
 
 def parse_status(homework):
     """Извлекает из информации о конкретной домашней работе статус работы."""
-    homework_name = homework['homework_name']
-    homework_status = homework['status']
-    if homework_name is None:
-        logger.error('Данные по ключу "homework_name" не найдены')
-        raise KeyError('Данные по ключу "homework_name" не найдены')
-    if homework_status is None:
-        logger.error('Данные по ключу "status" не найдены')
-        raise KeyError('Данные по ключу "status" не найдены')
+    try:
+        homework_name = homework['homework_name']
+    except KeyError as error:
+        logger.error(f'Данные по ключу "homework_name" не найдены: {error}')
+        raise KeyError(f'Данные по ключу "homework_name" не найдены: {error}')
+    try:
+        homework_status = homework['status']
+    except KeyError as error:
+        logger.error(f'Данные по ключу "status" не найдены: {error}')
+        raise KeyError(f'Данные по ключу "status" не найдены: {error}')
     if homework_status not in HOMEWORK_STATUSES:
         logger.error(f'Неизвестный статус работы: {homework_status}')
         raise HomeworkStatusError(
@@ -113,8 +123,7 @@ def parse_status(homework):
 
 def check_tokens():
     """Проверка доступности переменных окружения."""
-    if all([PRACTICUM_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_TOKEN]):
-        return True
+    return all([PRACTICUM_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_TOKEN])
 
 
 def main():
