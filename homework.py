@@ -121,7 +121,8 @@ def main():
     """Основная логика работы бота."""
     logger.debug('Начало проверки главной функции')
     if not check_tokens():
-        message = 'Отсутствует обязательная переменная окружения:'
+        logger.critical('Отсутствует обязательная переменная окружения')
+        sys.exit('Отсутствует обязательная переменная окружения')
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     while True:
