@@ -82,22 +82,15 @@ def get_api_answer(current_timestamp):
 def check_response(response):
     """Проверить ответ API."""
     logger.debug('Начало проверки ответа API')
-    homeworks = response['homeworks']
+    try:
+        homeworks = response['homeworks']
+    except KeyError as error:
+        logger.error(f'Данные по ключу "homeworks" не найдены: {error}')
+        raise KeyError(f'Данные по ключу "homeworks" не найдены: {error}')
     if not isinstance(homeworks, list):
         logger.error('Тип запроса не список')
         raise TypeError('Тип запроса не список')
-    else:
-        try:
-            homeworks
-            return homeworks
-        except KeyError as error:
-            if homeworks is None:
-                logger.error(
-                    f'Данные по ключу "homeworks" не найдены: {error}'
-                )
-                raise KeyError(
-                    f'Данные по ключу "homeworks" не найдены: {error}'
-                )
+    return homeworks
 
 
 def parse_status(homework):
